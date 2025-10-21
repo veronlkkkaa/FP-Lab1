@@ -1,5 +1,7 @@
-(ns lab1.euler9)
+(ns lab1.euler9
+  (:require [clojure.string :as str]))
 
+;; вспомогательная функция для умножения коллекции (big-int friendly)
 (defn product [coll]
   (reduce *' coll))
 
@@ -21,7 +23,7 @@
           :else
           (recur a (inc b)))))))
 
-;; 2. Обычная рекурсивная версия
+;; 2. Обычная рекурсия
 (defn solve-rec []
   (loop [a 1
          b 2]
@@ -29,7 +31,7 @@
       (let [c (- 1000 a b)]
         (cond
           (> b c)
-          (recur (inc a) (inc a))  ; увеличиваем a, b = a + 1
+          (recur (inc a) (inc a))
 
           (= (+ (* a a)
                 (* b b))
@@ -55,36 +57,27 @@
        first
        (apply *)))
 
-;; 4. map/flatten
-(defn solve-with-map []
+;; 4. Перебор общий источник данных для обеих реализаций
+(def triples
   (->> (range 1 334)
        (mapcat (fn [a]
                  (map (fn [b]
                         (let [c (- 1000 a b)]
                           (when (and (> c b)
-                                     (= (+ (* a a)
-                                           (* b b))
-                                        (* c c)))
-                            (* a b c))))
-                      (range (inc a) 500))))
-       (remove nil?)
-       first))
-
-;; 5. Ленивый генератор
-(defn lazy-triples []
-  (->> (range 1 334)
-       (mapcat (fn [a]
-                 (map (fn [b]
-                        (let [c (- 1000 a b)]
-                          (when (and (> c b)
-                                     (= (+ (* a a)
-                                           (* b b))
+                                     (= (+ (* a a) (* b b))
                                         (* c c)))
                             [a b c])))
                       (range (inc a) 500))))
        (remove nil?)))
 
+;; 4 Map
+(defn solve-with-map []
+  (let [triple (first triples)]
+    (when triple
+      (apply * triple))))
+
+;; 5 Ленивая последовательность. используем тот же ленивый перебор triples, берём ту же тройку и считаем произведение
 (defn solve-lazy []
-  (->> (lazy-triples)
-       first
-       (apply *)))
+  (let [[a b c] (first triples)]
+    (when a
+      (* a b c))))
