@@ -8,12 +8,11 @@
 (defn tail-rec []
   (loop [a 1
          b 2]
-    (if (> a 333)
-      nil
+    (when-not (> a 333)
       (let [c (- 1000 a b)]
         (cond
           (> b c)
-          (recur (inc a) (+ (inc a) 1))
+          (recur (inc a) (inc (inc a)))
 
           (= (+ (* a a)
                 (* b b))
@@ -27,8 +26,7 @@
 (defn solve-rec
   ([] (solve-rec 1))
   ([a]
-   (if (> a 333)
-     nil
+   (when-not (> a 333)
      (let [res (some (fn [b]
                        (let [c (- 1000 a b)]
                          (when (and (> c b)
@@ -37,9 +35,7 @@
                                        (* c c)))
                            (* a b c))))
                      (range (inc a) 500))]
-       (if res
-         res
-         (solve-rec (inc a)))))))
+       (or res (solve-rec (inc a)))))))
 
 ;; 3. Модульный подход
 (defn all-triples []
@@ -61,11 +57,11 @@
 
 ;; 4. Генерация при помощи map
 (def triples
-  (->> (range 1 334)
-       (mapcat (fn [a]
-                 (map (fn [b]
-                        [a b (- 1000 a b)])
-                      (range (inc a) 500))))))
+  (mapcat (fn [a]
+            (map (fn [b]
+                   [a b (- 1000 a b)])
+                 (range (inc a) 500)))
+          (range 1 334)))
 
 (defn solve-with-map []
   (->> triples
