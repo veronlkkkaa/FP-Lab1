@@ -4,7 +4,7 @@
 (defn product [coll]
   (reduce *' coll))
 
-;;  1. Хвостовая рекурсия 
+;; 1. Хвостовая рекурсия
 (defn tail-rec []
   (loop [a 1
          b 2]
@@ -25,7 +25,7 @@
 
 ;; 2. Обычная рекурсия
 (defn solve-rec
-  ([] (solve-rec 1)) 
+  ([] (solve-rec 1))
   ([a]
    (if (> a 333)
      nil
@@ -41,10 +41,7 @@
          res
          (solve-rec (inc a)))))))
 
-
-
 ;; 3. Модульный подход
-
 (defn all-triples []
   (for [a (range 1 334)
         b (range (inc a) 500)]
@@ -57,12 +54,12 @@
           (* c c))))
 
 (defn solve-modular []
-  (->> (all-triples)      ; генерация
-       (filter pythagorean?) ; фильтрация
+  (->> (all-triples)
+       (filter pythagorean?)
        first
-       product))          ; свёртка (reduce внутри product)
+       product))
 
-;; 4. Генерация при помощи map 
+;; 4. Генерация при помощи map
 (def triples
   (->> (range 1 334)
        (mapcat (fn [a]
@@ -72,22 +69,20 @@
 
 (defn solve-with-map []
   (->> triples
-       (filter pythagorean?)   ; используем тот же предикат
+       (filter pythagorean?)
        first
        product))
 
-;; 5. Бесконечная ленивная последовательность 
-
-
+;; 5. Бесконечная ленивная последовательность
 (def lazy-triples
-  (for [a (iterate inc 1)          
-        b (iterate inc (inc a))    
+  (for [a (iterate inc 1)
+        b (iterate inc (inc a))
         :let [c (- 1000 a b)]
-        :while (pos? c)]           ;
+        :while (pos? c)]
     [a b c]))
 
 (defn solve-lazy []
   (->> lazy-triples
-       (filter pythagorean?)  
+       (filter pythagorean?)
        first
        product))
